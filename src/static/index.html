@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIMB ECR Simulator</title>
+    <link rel="icon" href="data:,">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="header-bar">
+                    <h4 class="mb-0">CIMB ECR Simulator v4.2</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="button-group mb-3">
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#settingsModal">
+                        Settings
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="openBtn">
+                        Open
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-section">
+                    <div class="mb-3">
+                        <label for="transactionType" class="form-label">Transaction</label>
+                        <select class="form-select" id="transactionType">
+                            <option value="SALE" selected>SALE</option>
+                            <option value="INSTALLMENT">INSTALLMENT</option>
+                            <option value="VOID">VOID</option>
+                            <option value="REFUND">REFUND</option>
+                            <option value="QRIS MPM">QRIS MPM</option>
+                            <option value="QRIS CPM">QRIS CPM</option>
+                            <option value="QRIS NOTIFICATION">QRIS NOTIFICATION</option>
+                            <option value="QRIS REFUND">QRIS REFUND</option>
+                            <option value="POINT REWARD">POINT REWARD</option>
+                            <option value="TEST HOST">TEST HOST</option>
+                            <option value="SETTLEMENT">SETTLEMENT</option>
+                            <option value="REPRINT">REPRINT</option>
+                            <option value="REPORT">REPORT</option>
+                            <option value="LOGON">LOGON</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <input type="text" class="form-control" id="amount" placeholder="0.00">
+                    </div>
+
+                    <div class="mb-3" id="additionalFields" style="display:none;">
+                        <label for="invoiceNo" class="form-label">Invoice No (for Void/Refund)</label>
+                        <input type="text" class="form-control" id="invoiceNo" placeholder="000001">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Request</label>
+                        <textarea class="form-control" id="requestArea" rows="4" readonly></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Response</label>
+                        <textarea class="form-control" id="responseArea" rows="4" readonly></textarea>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-lg send-btn" id="sendBtn">
+                        Send
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="status-section">
+                    <h5>Status</h5>
+                    <div class="status-indicator" id="statusIndicator">
+                        <span class="status-dot online"></span>
+                        <span>ONLINE</span>
+                    </div>
+
+                    <h5 class="mt-4">Transaction History</h5>
+                    <div class="history-container" id="historyContainer">
+                        <div class="history-item">
+                            <small class="text-muted">No transactions yet</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="communication" class="form-label">Communication</label>
+                                <select class="form-select" id="communication">
+                                    <option value="Serial" selected>Serial</option>
+                                    <option value="Socket">Socket</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="socketIp" class="form-label">Socket Ip</label>
+                                <input type="text" class="form-control" id="socketIp" value="127.0.0.1">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="socketPort" class="form-label">Socket Port</label>
+                                <input type="text" class="form-control" id="socketPort" value="9001">
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="enableRestApi">
+                                    <label class="form-check-label" for="enableRestApi">
+                                        Enable Rest Api
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="enableSsl">
+                                    <label class="form-check-label" for="enableSsl">
+                                        Enable SSL
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="edcSerialNumber" class="form-label">EDC Serial Number</label>
+                                <input type="text" class="form-control" id="edcSerialNumber">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="serialPort" class="form-label">Serial Port</label>
+                                <select class="form-select" id="serialPort">
+                                    <option value="">Select Port</option>
+                                    <script>
+                                        for (let i = 1; i <= 100; i++) {
+                                            document.write(`<option value="COM${i}">COM${i}</option>`);
+                                        }
+                                    </script>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="speedBaud" class="form-label">Speed (Baud)</label>
+                                <select class="form-select" id="speedBaud">
+                                    <option value="9600" selected>9600</option>
+                                    <option value="19200">19200</option>
+                                    <option value="38400">38400</option>
+                                    <option value="57600">57600</option>
+                                    <option value="115200">115200</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="dataBits" class="form-label">Data Bits</label>
+                                <input type="text" class="form-control" id="dataBits" value="8">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="stopBits" class="form-label">Stop Bits</label>
+                                <select class="form-select" id="stopBits">
+                                    <option value="1" selected>1</option>
+                                    <option value="2">2</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="parity" class="form-label">Parity</label>
+                                <select class="form-select" id="parity">
+                                    <option value="None" selected>None</option>
+                                    <option value="Even">Even</option>
+                                    <option value="Odd">Odd</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveSettings">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
